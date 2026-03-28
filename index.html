@@ -1,221 +1,598 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tab Tracker - Giru Edition</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Date Tracker</title>
+  <style>
+    @import url('<https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap>');
 
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap');
+    :root {
+      --bg-base: #F7F5F0;
+      --bg-white: #FFFFFF;
+      --bg-dark: #121212;
+      --bg-accent: #E8E4D9;
+      --text-dark: #121212;
+      --text-light: #F7F5F0;
+      --text-muted: #70706B;
+      --border-dark: #121212;
+      --border-light: rgba(18, 18, 18, 0.1);
+      --font: 'Inter', sans-serif;
+      --radius-lg: 40px;
+      --radius-pill: 100px;
+    }
 
-:root {
-  --bg-base:#F7F5F0;
-  --bg-white:#FFFFFF;
-  --bg-dark:#121212;
-  --bg-accent:#E8E4D9;
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-  --text-dark:#121212;
-  --text-light:#F7F5F0;
-  --text-muted:#70706B;
+    body {
+      font-family: var(--font);
+      background: var(--bg-base);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 16px;
+    }
 
-  --border-dark:#121212;
-  --border-light:rgba(18,18,18,0.1);
+    #setup {
+      width: 90vw;
+      max-width: 480px;
+      background: var(--bg-white);
+      border: 1px solid var(--border-dark);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
 
-  --font-family:'Inter',sans-serif;
-  --radius-lg:40px;
-  --radius-pill:100px;
-}
+    .setup-bar {
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid var(--border-light);
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+    }
 
-*{box-sizing:border-box;margin:0;padding:0}
+    .setup-body {
+      padding: 2rem;
+    }
 
-body{
-  font-family:var(--font-family);
-  background:var(--bg-base);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  height:100vh;
-}
+    .setup-body h2 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
 
-/* container */
-.app-window{
-  width:90vw;
-  max-width:1200px;
-  height:85vh;
-  background:#fff;
-  border:1px solid #121212;
-  border-radius:var(--radius-lg);
-  display:grid;
-  grid-template-rows:auto 1fr;
-  overflow:hidden;
-}
+    .setup-sub {
+      border: 1px solid var(--border-dark);
+      padding: 0.35rem 0.8rem;
+      border-radius: var(--radius-pill);
+      display: inline-block;
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      margin-bottom: 2rem;
+    }
 
-/* top */
-.top-bar{
-  display:flex;
-  justify-content:space-between;
-  padding:1.5rem 2rem;
-  border-bottom:1px solid var(--border-light);
-  font-size:.7rem;
-  letter-spacing:.1em;
-}
+    #app {
+      display: none;
+      width: 90vw;
+      max-width: 1200px;
+      height: 85vh;
+      background: var(--bg-white);
+      border: 1px solid var(--border-dark);
+      border-radius: var(--radius-lg);
+      grid-template-rows: auto 1fr;
+      overflow: hidden;
+    }
 
-/* grid */
-.main-grid{
-  display:grid;
-  grid-template-columns:350px 1fr;
-}
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid var(--border-light);
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+    }
 
-/* left */
-.pane-status{
-  background:var(--bg-accent);
-  padding:2rem;
-}
+    .main-grid {
+      display: grid;
+      grid-template-columns: 350px 1fr;
+      overflow: hidden;
+    }
 
-.hero-statement h2{
-  font-size:3rem;
-  margin-bottom:10px;
-}
+    .pane-status {
+      background: var(--bg-accent);
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--border-light);
+    }
 
-.sub-hero{
-  border:1px solid var(--border-dark);
-  padding:.4rem .8rem;
-  border-radius:var(--radius-pill);
-  display:inline-block;
-  margin-bottom:20px;
-}
+    .hero-statement h2 {
+      font-size: 3rem;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 0.6rem;
+    }
 
-.balance-list{
-  list-style:none;
-  margin-top:2rem;
-}
+    .sub-hero {
+      border: 1px solid var(--border-dark);
+      padding: 0.35rem 0.8rem;
+      border-radius: var(--radius-pill);
+      display: inline-block;
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.75rem;
+    }
 
-.balance-item{
-  display:flex;
-  justify-content:space-between;
-  padding:.8rem 0;
-}
+    .hero-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
 
-.balance-item.negative{
-  font-weight:bold;
-}
+    .tally-list {
+      list-style: none;
+      margin-top: auto;
+    }
 
-/* right */
-.pane-history{
-  display:flex;
-  flex-direction:column;
-}
+    .tally-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.8rem 0;
+      border-top: 1px solid var(--border-light);
+      font-size: 0.9rem;
+    }
 
-.history-header{
-  padding:1.5rem 2rem;
-  border-bottom:1px solid var(--border-light);
-}
+    .tally-item.leader { font-weight: 700; }
+    .tally-count { font-weight: 700; }
 
-.history-list{
-  flex:1;
-  overflow-y:auto;
-  padding:1rem 2rem;
-}
+    .pane-history {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
 
-.ledger-item{
-  display:grid;
-  grid-template-columns:40px 1fr 100px 100px;
-  padding:1rem 0;
-  border-bottom:1px solid var(--border-light);
-}
+    .history-header {
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid var(--border-light);
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+    }
 
-/* buttons */
-.action-area{
-  padding:1.5rem 2rem;
-  display:flex;
-  justify-content:space-between;
-  border-top:1px solid var(--border-light);
-}
+    .history-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 2rem;
+    }
 
-button{
-  padding:.8rem 1.5rem;
-  border-radius:999px;
-  border:1px solid #121212;
-  background:#121212;
-  color:#fff;
-  cursor:pointer;
-}
+    .empty {
+      text-align: center;
+      color: var(--text-muted);
+      padding: 3rem 0;
+      font-size: 0.88rem;
+    }
 
-button.outline{
-  background:transparent;
-  color:#121212;
-}
-</style>
+    .ledger-item {
+      display: grid;
+      grid-template-columns: 40px 1fr 140px 28px;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .ledger-num {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .ledger-date { font-weight: 600; font-size: 0.9rem; }
+    .ledger-note { font-size: 0.78rem; color: var(--text-muted); margin-top: 2px; }
+
+    .ledger-badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      background: var(--bg-dark);
+      color: var(--text-light);
+      padding: 5px 14px;
+      border-radius: var(--radius-pill);
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .ledger-delete {
+      background: none;
+      border: none;
+      color: var(--border-light);
+      font-size: 0.85rem;
+      cursor: pointer;
+      padding: 0;
+      width: auto;
+      transition: color 0.15s;
+    }
+
+    .ledger-delete:hover { color: #e57373; opacity: 1; }
+
+    .action-area {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 2rem;
+      border-top: 1px solid var(--border-light);
+    }
+
+    .date-count {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+    }
+
+    label {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    input[type="text"], input[type="date"], textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid var(--border-dark);
+      border-radius: 12px;
+      font-size: 0.95rem;
+      margin-bottom: 20px;
+      background: var(--bg-base);
+      font-family: var(--font);
+      transition: background 0.15s;
+    }
+
+    input:focus, textarea:focus { outline: none; background: white; }
+    textarea { resize: vertical; min-height: 70px; }
+
+    button {
+      padding: 0.8rem 1.5rem;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border-dark);
+      background: var(--bg-dark);
+      color: var(--text-light);
+      cursor: pointer;
+      font-family: var(--font);
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      transition: opacity 0.15s;
+    }
+
+    button:hover { opacity: 0.8; }
+
+    button.outline {
+      background: transparent;
+      color: var(--text-dark);
+    }
+
+    .payer-toggle {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .payer-toggle button {
+      flex: 1;
+      background: transparent;
+      color: var(--text-dark);
+    }
+
+    .payer-toggle button.active {
+      background: var(--bg-dark);
+      color: var(--text-light);
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(18, 18, 18, 0.45);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: var(--bg-white);
+      border: 1px solid var(--border-dark);
+      border-radius: 28px;
+      width: 100%;
+      max-width: 440px;
+      overflow: hidden;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .modal-header h3 {
+      font-weight: 800;
+      font-size: 1rem;
+      letter-spacing: 0.05em;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1rem;
+      padding: 0;
+      width: auto;
+      line-height: 1;
+    }
+
+    .modal-body { padding: 1.75rem 2rem 0; }
+
+    .modal-footer {
+      padding: 1.25rem 2rem;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    @media (max-width: 720px) {
+      #app { height: auto; min-height: 85vh; }
+      .main-grid { grid-template-columns: 1fr; }
+      .pane-status { border-right: none; border-bottom: 1px solid var(--border-light); }
+      .tally-list { margin-top: 1.5rem; }
+      .hero-statement h2 { font-size: 2.2rem; }
+    }
+  </style>
 </head>
-
 <body>
 
-<div class="app-window">
-
-  <div class="top-bar">
-    <div>SYSTEM.LEDGER // V2</div>
-    <div>GROUP: APARTMENT 4B</div>
+<div id="setup">
+  <div class="setup-bar">DATE.TRACKER // SETUP</div>
+  <div class="setup-body">
+    <h2>WHO'S IN THIS?</h2>
+    <div class="setup-sub">ENTER YOUR NAMES</div>
+    <label>Your name</label>
+    <input type="text" id="name1" placeholder="e.g. Alex" />
+    <label>Partner's name</label>
+    <input type="text" id="name2" placeholder="e.g. Sam" />
+    <button onclick="saveNames()" style="width:100%;">Let's go →</button>
   </div>
-
-  <div class="main-grid">
-
-    <!-- LEFT -->
-    <div class="pane-status">
-      <div class="hero-statement">
-        <h2>MARCUS</h2>
-        <div class="sub-hero">IS NEXT TO PAY</div>
-        <p>Marcus has highest outstanding balance.</p>
-      </div>
-
-      <ul class="balance-list">
-        <li class="balance-item negative"><span>Marcus</span><span>-$142.50</span></li>
-        <li class="balance-item"><span>Sarah</span><span>+$85.00</span></li>
-        <li class="balance-item"><span>David</span><span>+$57.50</span></li>
-      </ul>
-    </div>
-
-    <!-- RIGHT -->
-    <div class="pane-history">
-
-      <div class="history-header">
-        <h2>LEDGER</h2>
-      </div>
-
-      <div class="history-list">
-
-        <div class="ledger-item">
-          <div>01</div>
-          <div>Internet Bill</div>
-          <div>$89.99</div>
-          <div>DAVID</div>
-        </div>
-
-        <div class="ledger-item">
-          <div>02</div>
-          <div>Groceries</div>
-          <div>$124.50</div>
-          <div>SARAH</div>
-        </div>
-
-        <div class="ledger-item">
-          <div>03</div>
-          <div>Uber</div>
-          <div>$32.00</div>
-          <div>MARCUS</div>
-        </div>
-
-      </div>
-
-      <div class="action-area">
-        <button class="outline">Settle Up</button>
-        <button>Log Expense</button>
-      </div>
-
-    </div>
-
-  </div>
-
 </div>
 
+<div id="app">
+  <div class="top-bar">
+    <span>DATE.TRACKER // V1</span>
+    <button class="outline" onclick="resetNames()" style="font-size:0.7rem; padding:0.4rem 1rem; letter-spacing:0.05em;">CHANGE NAMES</button>
+  </div>
+  <div class="main-grid">
+    <div class="pane-status">
+      <div class="hero-statement">
+        <h2 id="next-payer">—</h2>
+        <div class="sub-hero">IS NEXT TO PAY</div>
+        <p class="hero-desc" id="hero-desc"></p>
+      </div>
+      <ul class="tally-list" id="tally-list"></ul>
+    </div>
+    <div class="pane-history">
+      <div class="history-header">LEDGER</div>
+      <div class="history-list" id="history-list">
+        <p class="empty">No dates logged yet.</p>
+      </div>
+      <div class="action-area">
+        <span class="date-count" id="date-count"></span>
+        <button onclick="openModal()">Log a Date</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>LOG A DATE</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <label>Date</label>
+      <input type="date" id="log-date" />
+      <label>Who paid?</label>
+      <div class="payer-toggle">
+        <button id="btn-p1" onclick="selectPayer(0)"></button>
+        <button id="btn-p2" onclick="selectPayer(1)"></button>
+      </div>
+      <label>Note <span style="font-weight:400;text-transform:none">(optional)</span></label>
+      <textarea id="log-note" placeholder="e.g. Italian place downtown"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="outline" onclick="closeModal()">Cancel</button>
+      <button onclick="logDate()">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const STORAGE_KEY = 'date-tracker-v1';
+
+  function load() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+    catch { return {}; }
+  }
+
+  function save(data) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }
+
+  let selectedPayer = 0;
+
+  function init() {
+    const data = load();
+    if (Array.isArray(data.names) && data.names.length === 2 && data.names[0] && data.names[1]) {
+      document.getElementById('setup').style.display = 'none';
+      document.getElementById('app').style.display = 'grid';
+      showApp(data);
+    } else {
+      document.getElementById('setup').style.display = 'block';
+      document.getElementById('app').style.display = 'none';
+    }
+  }
+
+  function saveNames() {
+    const n1 = document.getElementById('name1').value.trim();
+    const n2 = document.getElementById('name2').value.trim();
+    if (!n1 || !n2) { alert('Please enter both names.'); return; }
+    if (n1 === n2) { alert('Names must be different.'); return; }
+    const data = load();
+    data.names = [n1, n2];
+    data.dates = data.dates || [];
+    save(data);
+    document.getElementById('setup').style.display = 'none';
+    document.getElementById('app').style.display = 'grid';
+    showApp(data);
+  }
+
+  function showApp(data) {
+    const dates = data.dates || [];
+    let nextIdx = 0;
+    if (dates.length > 0) {
+      const lastPayerIdx = data.names.indexOf(dates[0].paid);
+      nextIdx = lastPayerIdx === 0 ? 1 : 0;
+    }
+    selectedPayer = nextIdx;
+    document.getElementById('next-payer').textContent = data.names[nextIdx].toUpperCase();
+
+    const counts = [0, 0];
+    dates.forEach(d => {
+      const i = data.names.indexOf(d.paid);
+      if (i !== -1) counts[i]++;
+    });
+
+    document.getElementById('hero-desc').textContent =
+      dates.length === 0
+        ? 'No dates logged yet.'
+        : `${data.names[nextIdx]} hasn't paid since ${data.names[nextIdx === 0 ? 1 : 0]} last covered the bill.`;
+
+    document.getElementById('tally-list').innerHTML = data.names.map((name, i) => `
+      <li class="tally-item${counts[i] >= counts[i === 0 ? 1 : 0] ? ' leader' : ''}">
+        <span>${escHtml(name)}</span>
+        <span class="tally-count">${counts[i]} date${counts[i] !== 1 ? 's' : ''} paid</span>
+      </li>
+    `).join('');
+
+    document.getElementById('date-count').textContent =
+      dates.length ? `${dates.length} ENTR${dates.length !== 1 ? 'IES' : 'Y'}` : '';
+
+    renderHistory(data);
+  }
+
+  function openModal() {
+    const data = load();
+    document.getElementById('log-date').value = today();
+    document.getElementById('btn-p1').textContent = data.names[0];
+    document.getElementById('btn-p2').textContent = data.names[1];
+    selectPayer(selectedPayer);
+    document.getElementById('log-note').value = '';
+    document.getElementById('modal-overlay').classList.add('open');
+  }
+
+  function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('open');
+  }
+
+  function selectPayer(idx) {
+    selectedPayer = idx;
+    document.getElementById('btn-p1').classList.toggle('active', idx === 0);
+    document.getElementById('btn-p2').classList.toggle('active', idx === 1);
+  }
+
+  function logDate() {
+    const dateVal = document.getElementById('log-date').value;
+    const note = document.getElementById('log-note').value.trim();
+    if (!dateVal) { alert('Please pick a date.'); return; }
+    const data = load();
+    data.dates = data.dates || [];
+    data.dates.push({ date: dateVal, paid: data.names[selectedPayer], note });
+    data.dates.sort((a, b) => b.date.localeCompare(a.date));
+    save(data);
+    closeModal();
+    showApp(data);
+  }
+
+  function deleteEntry(idx) {
+    if (!confirm('Delete this entry?')) return;
+    const data = load();
+    data.dates.splice(idx, 1);
+    save(data);
+    showApp(data);
+  }
+
+  function renderHistory(data) {
+    const list = document.getElementById('history-list');
+    const dates = data.dates || [];
+    if (dates.length === 0) {
+      list.innerHTML = '<p class="empty">No dates logged yet.</p>';
+      return;
+    }
+    list.innerHTML = dates.map((entry, i) => `
+      <div class="ledger-item">
+        <div class="ledger-num">${String(i + 1).padStart(2, '0')}</div>
+        <div>
+          <div class="ledger-date">${formatDate(entry.date)}</div>
+          ${entry.note ? `<div class="ledger-note">${escHtml(entry.note)}</div>` : ''}
+        </div>
+        <span class="ledger-badge">${escHtml(entry.paid).toUpperCase()}</span>
+        <button class="ledger-delete" onclick="deleteEntry(${i})" title="Delete">✕</button>
+      </div>
+    `).join('');
+  }
+
+  function resetNames() {
+    if (!confirm('Change names? Your date history will be kept.')) return;
+    const data = load();
+    const n1 = (prompt('Your name:', data.names[0]) || '').trim();
+    if (!n1) return;
+    const n2 = (prompt("Partner's name:", data.names[1]) || '').trim();
+    if (!n2) return;
+    if (n1 === n2) { alert('Names must be different.'); return; }
+    data.dates = (data.dates || []).map(d => ({
+      ...d,
+      paid: d.paid === data.names[0] ? n1 : n2
+    }));
+    data.names = [n1, n2];
+    save(data);
+    showApp(data);
+  }
+
+  function today() {
+    const now = new Date();
+    const local = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
+    return local.toISOString().split('T')[0];
+  }
+
+  function formatDate(iso) {
+    const [y, m, d] = iso.split('-');
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return `${months[+m - 1]} ${+d}, ${y}`;
+  }
+
+  function escHtml(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  init();
+</script>
 </body>
 </html>
